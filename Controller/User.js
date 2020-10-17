@@ -68,7 +68,7 @@ router.post('/:id/send', async (req, res) => {
 
 // Get All Message
 router.get('/messages', async (req, res) => {
-    const userMessage = await userMessageDataModel.find({} , {message: 1, user: 0});
+    const userMessage = await userMessageDataModel.findOne({});
     res.send(userMessage);
 });
 
