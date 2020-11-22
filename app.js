@@ -32,14 +32,6 @@ app.use((req, res, next) => {
 });
 
 // Error Route Handler
-// if(app.get("env") === "production") {
-//     app.use((error, req, res, next) => {
-//         res.status(req.status || 500).send({
-//             message: error.message
-//         });
-//     });
-// }
-
 app.use((error, req, res, next) => {
     res.status(req.status || 500).send({
         message: error.message
@@ -47,14 +39,6 @@ app.use((error, req, res, next) => {
 });
 
 // For Development purpose
-
-// app.use((error, req, res, next) => {
-//     res.status(req.status || 500).send({
-//         message: error.message,
-//         stack: error.stack
-//     });
-// });
-
 app.listen(port, () => {
     console.log("Listen on "+ port +" port");
 });
