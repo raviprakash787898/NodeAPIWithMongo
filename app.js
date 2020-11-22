@@ -7,7 +7,10 @@ const morgan = require('morgan');
 // DB connect 
 require('./connectServer');
 
+const port = process.env.PORT || 3000;
+
 // Middleware
+app.use(cors());
 app.use(bodyParser.urlencoded({
             extended: true
         })
@@ -43,6 +46,6 @@ app.use((error, req, res, next) => {
     });
 });
 
-app.listen(3001, () => {
-    console.log("Listen on 3001 port");
+app.listen(port, () => {
+    console.log("Listen on "+ port +" port");
 });
