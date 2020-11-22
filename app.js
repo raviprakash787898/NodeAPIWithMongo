@@ -38,8 +38,10 @@ app.use((error, req, res, next) => {
     });
 });
 
+// Set Static Folder
+app.use(express.static(path.join(__dirname,'public')));
 app.get('*', (req, res) =>{
-    res.sendFile(path.join(__dirname,'./Client-App/dist/tutor-class/index.html'));
+    res.sendFile(path.join(__dirname,'public/index.html'));
 });
 
 // For Development purpose
