@@ -1,6 +1,7 @@
 const express = require('express');
 require("express-async-errors");
 const app = express();
+const path = require("path");
 const cors = require("cors");
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
