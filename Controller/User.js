@@ -12,7 +12,8 @@ const userDataModel = mongoose.model("Users");
 const userMessageDataModel = mongoose.model("Messages");
 
 // Get User API
-router.get('/:id/getList', [ authorizationCheck.AuthorizeRequest, authorizationCheck.RequestPermission(1) ] , async (req,res) => {
+// router.get('/:id/getList', [ authorizationCheck.AuthorizeRequest, authorizationCheck.RequestPermission(1) ] , async (req,res) => {
+router.get('/:id/getList', async (req,res) => {
     const data = await userDataModel.find({});
     res.send({
         message: 'Sucess',
