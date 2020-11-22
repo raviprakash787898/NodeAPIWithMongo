@@ -20,6 +20,12 @@ app.use(bodyParser.urlencoded({
     .use(bodyParser.json())
     .use(morgan());
 
+// Set Static Folder
+app.use(express.static(path.join(__dirname,'./public')));
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname,'/public/index.html'));
+});
+
 // Routes
 // require('./routes/appRoute');
 app.use("/api/user", require("./Controller/User"));
@@ -37,12 +43,6 @@ app.use((error, req, res, next) => {
     res.status(req.status || 500).send({
         message: error.message
     });
-});
-
-// Set Static Folder
-app.use(express.static(path.join(__dirname,'public')));
-app.get('*', (req, res) =>{
-    res.sendFile(path.join(__dirname,'public/index.html'));
 });
 
 // For Development purpose
