@@ -19,7 +19,7 @@
   "devDependencies": {},
   "scripts": {
     "dev": "nodemon app.js",
-    "prod": "cross-env NODE_ENV=production node app.js"
+    "start": "cross-env NODE_ENV=production node app.js"
   },
   "keywords": [],
   "author": "",
