@@ -22,7 +22,7 @@ router.post('/register', async (req, res, next) => {
     
         user.save().then(user => {
             res.json({
-                message: 'User Added Successfully!!!'
+                message: 'Success'
             })
         })
         .catch(error => {
@@ -63,7 +63,7 @@ router.post('/login', async (req, res, next) => {
                         expiresIn: '2h',
                     });
                     res.json({
-                        message: "Login Successfull!!!",
+                        message: "Success",
                         Data: user,
                         token
                     });

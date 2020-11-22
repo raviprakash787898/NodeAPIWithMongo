@@ -38,6 +38,10 @@ app.use((error, req, res, next) => {
     });
 });
 
+app.get('*', (req, res) =>{
+    res.sendFile(path.join(__dirname,'Client-App/dist/tutor-class/index.html'));
+});
+
 // For Development purpose
 app.listen(port, () => {
     console.log("Listen on "+ port +" port");
