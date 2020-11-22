@@ -1,5 +1,8 @@
 const router = require("express").Router();
 const mongoose = require('mongoose');
+const authorizationCheck = require('../middleware/authorize');
+const UserRoles = require('../models/userRoles');
+const UserRolesAssoc = require('../models/userRoleAssociation');
 
 // Model
 require('../models/users');
@@ -9,30 +12,36 @@ const userDataModel = mongoose.model("Users");
 const userMessageDataModel = mongoose.model("Messages");
 
 // Get User API
-router.get('/getList', async (req,res) => {
+router.get('/:id/getList', [ authorizationCheck.AuthorizeRequest, authorizationCheck.RequestPermission(1) ] , async (req,res) => {
     const data = await userDataModel.find({});
-    res.send(data);
+    res.send({
+        message: 'Sucess',
+        Data: data
+    });
 });
 
 // Post User API
-router.post('/add', async (req,res) => {
+router.post('/:id/add', authorizationCheck.AuthorizeRequest, async (req,res) => {
     const postData = new userDataModel();
     console.log(req.body);
     postData.name = req.body.name;
     postData.email = req.body.email;
     postData.gender = req.body.gender;
+    postData.phone = req.body.phone;
+    postData.password = req.body.password;
+    postData.isActive = true;
     await postData.save();
     res.send(postData);
 });
 
 // Get UserById API
-router.get('/:id', async (req,res) => {
+router.get('/:id', authorizationCheck.AuthorizeRequest, async (req,res) => {
     const postData = await userDataModel.findById(req.params.id);
     res.send(postData);
 });
 
 // Get UserById API
-router.put('/:id', async (req,res) => {
+router.put('/:id', authorizationCheck.AuthorizeRequest, async (req,res) => {
     const postData = await userDataModel.findByIdAndUpdate({
         _id: req.params.id
     }, req.body, {
@@ -45,7 +54,7 @@ router.put('/:id', async (req,res) => {
 });
 
 // Delete UserById API
-router.delete('/:id', async (req,res) => {
+router.delete('/:id', authorizationCheck.AuthorizeRequest, async (req,res) => {
     const postData = await userDataModel.findByIdAndRemove({
         _id: req.params.id
     });
@@ -54,7 +63,7 @@ router.delete('/:id', async (req,res) => {
 
 
 // Send Message
-router.post('/:id/send', async (req, res) => {
+router.post('/:id/send', authorizationCheck.AuthorizeRequest, async (req, res) => {
     const userData = await userDataModel.findById(req.params.id);
     const message = new userMessageDataModel();
     message.message = req.body.message;
@@ -67,19 +76,19 @@ router.post('/:id/send', async (req, res) => {
 });
 
 // Get All Message
-router.get('/messages', async (req, res) => {
+router.get('/messages', authorizationCheck.AuthorizeRequest, async (req, res) => {
     const userMessage = await userMessageDataModel.findOne({});
     res.send(userMessage);
 });
 
 // Get Message For User
-router.get('/:id/send', async (req, res) => {
+router.get('/:id/send', authorizationCheck.AuthorizeRequest, async (req, res) => {
     const userData = await userDataModel.findById(req.params.id).populate("messages");
     res.send(userData);
 });
 
 // Delete all Message
-router.delete('/:id/send', async (req, res) => {
+router.delete('/:id/send', authorizationCheck.AuthorizeRequest, async (req, res) => {
     const userData = await userDataModel.findById(req.params.id);
     userData.messages.forEach((item) => {
         userMessageDataModel.findByIdAndDelete(item);
@@ -93,7 +102,7 @@ router.delete('/:id/send', async (req, res) => {
 });
 
 // Delete single Message
-router.delete('/:id/send/:messageId', async (req, res) => {
+router.delete('/:id/send/:messageId', authorizationCheck.AuthorizeRequest, async (req, res) => {
     const userData = await userDataModel.findById(req.params.id);
     userData.messages.forEach((item, i) => {
         if(item == req.params.messageId) {
@@ -105,5 +114,41 @@ router.delete('/:id/send/:messageId', async (req, res) => {
     res.send(userData);
 });
 
+// Create user roles
+router.post('/createRole', authorizationCheck.AuthorizeRequest, async (req, res) => {
+    let userRole = new UserRoles({
+        roleId: req.body.roleId,
+        name: req.body.name,
+        priority: req.body.priority
+    });
+    await userRole.save();
+    res.send({
+        message: 'User Role created successfully...'
+    });
+});
+
+// Assign Roles to user
+router.post('/:id/createUserRole', authorizationCheck.AuthorizeRequest, async (req, res) => {
+    const userData = await userDataModel.findById(req.params.id);
+    UserRoles.findOne({
+        $and: [
+            {
+                name: req.body.name
+            }
+        ]
+    })
+    .then(role => {
+        let userRole = new UserRolesAssoc({
+            role: role._id,
+            user: userData._id
+        });
+        userRole.save();
+        userData.roles.push(role._id);
+        userData.save();
+        res.send({
+            message: 'User Role Associated successfully...'
+        });
+    });
+});
 
 module.exports = router;

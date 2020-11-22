@@ -10,9 +10,27 @@ const usersTable = new mongoose.Schema({
         required: true
     },
     gender: {
+        type: String
+    },
+    phone: {
+        type: String,
+        required: true,
+        maxlength: 10,
+        minlength: 10
+    },
+    password: {
         type: String,
         required: true
     },
+    isActive: {
+        type: Boolean
+    },
+    roles: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "UserRoles"
+        }
+    ],
     messages: [
         {
             type: mongoose.Schema.Types.ObjectId,

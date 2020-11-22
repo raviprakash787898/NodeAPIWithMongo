@@ -8,11 +8,17 @@ const morgan = require('morgan');
 require('./connectServer');
 
 // Middleware
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({
+            extended: true
+        })
+    )
+    .use(bodyParser.json())
     .use(morgan());
 
 // Routes
-app.use("/user", require("./Controller/User"));
+// require('./routes/appRoute');
+app.use("/api/user", require("./Controller/User"));
+app.use("/api", require("./Controller/AuthController"));
 
 // Route mismatch error
 app.use((req, res, next) => {
