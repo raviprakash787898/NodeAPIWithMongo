@@ -4,6 +4,9 @@ const User      = require('../models/users');
 const bcrypt    = require('bcryptjs');
 const jwt       = require('jsonwebtoken');
 
+const toDeleteKey = ['isActive', 'password', 'roles', 'messages'];
+
+
 router.post('/register', async (req, res, next) => {
     bcrypt.hash(req.body.password, 10, (error, hashedPass) => {
         if(error) {
@@ -21,13 +24,20 @@ router.post('/register', async (req, res, next) => {
         })
     
         user.save().then(user => {
+            let user_Info = removeKeyFromObject(user, toDeleteKey);
             res.json({
-                message: 'Success'
+                status: 'Success',
+                message: 'User Added Successfully!!!',
+                error: '',
+                Data: user_Info
             })
         })
         .catch(error => {
             res.json({
-                message: 'An error occured!!!'
+                status: 'Fail',
+                message: '',
+                error: 'An error occured while registering!!!',
+                Data: {}
             })
         });
     });
@@ -52,8 +62,10 @@ router.post('/login', async (req, res, next) => {
             bcrypt.compare(password, user.password, (error, result) => {
                 if(error) {
                     res.json({
-                        message: "An error occured while login!!!",
-                        error: error
+                        status: 'Fail',
+                        message: '',
+                        error: 'An error occured while login!!! ' + error,
+                        Data: {}
                     });
                 }
                 if(result) {
@@ -62,25 +74,41 @@ router.post('/login', async (req, res, next) => {
                     {
                         expiresIn: '2h',
                     });
+                    let user_Info = removeKeyFromObject(user, toDeleteKey);
                     res.json({
-                        message: "Success",
-                        Data: user,
+                        status: 'Success',
+                        message: 'Successfully Loggned In',
+                        error: '',
+                        Data: user_Info,
                         token
                     });
                 }
                 else {
                     res.json({
-                        message: "Password does not match..."
+                        status: 'Fail',
+                        message: '',
+                        error: 'Password does not match...',
+                        Data: {}
                     });
                 }
             })
         }
         else {
             res.json({
-                message: "No user found!!!"
+                status: 'Fail',
+                message: '',
+                error: 'No user found!!!',
+                Data: {}
             });
         }
     })
 })
+
+const removeKeyFromObject = (obj, toDeleteKey) => {
+    toDeleteKey.forEach((item, i) => {
+        delete obj[item];
+    });
+    return obj;
+}
 
 module.exports = router;
