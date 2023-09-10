@@ -5,7 +5,8 @@ const mongoDBErrors = require("mongoose-mongodb-errors");
 
 require('dotenv').config();
 
-const mongo_URI = "mongodb+srv://ravi_rp:Ravirp@787898@realmcluster.5y7pm.mongodb.net/Mowgli?retryWrites=true&w=majority";
+// const mongo_URI = "mongodb+srv://ravi_rp:Ravirp@787898@realmcluster.5y7pm.mongodb.net/Mowgli?retryWrites=true&w=majority";
+const mongo_URI = "mongodb+srv://mfsiraviprakash:<password>@azureclustertest.chctgv2.mongodb.net/AzureClusterTest?retryWrites=true&w=majority";
 
 mongoose.Promise = global.Promise;
 mongoose.plugin(mongoDBErrors);
